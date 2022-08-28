@@ -36,6 +36,7 @@
   "author": "Jerry Zhu",
   "license": "MIT",
   "devDependencies": {
+    "@wasm-tool/wasm-pack-plugin": "^1.6.0",
     "bestzip": "^2.1.2",
     "mini-css-extract-plugin": "^2.5.2",
     "run-script-os": "^1.1.6",

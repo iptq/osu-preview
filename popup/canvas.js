@@ -37,29 +37,31 @@ const processHitObjects = (hitObjects, timingPoints, SV) => {
  * @param {*} beatmap
  * @param {*} previewTime
  */
-const playPreview = (canvasElement, playbackTimeElement, progressElement, beatmap, previewTime) => {
+const playPreview = (renderer, canvasElement, playbackTimeElement, progressElement, beatmap, previewTime) => {
   let mapStartTime = previewTime;
   let startTime = performance.now();
 
-  const ctx = canvasElement.getContext('2d');
-  ctx.translate(64, 48);
+  renderer.render(beatmap);
 
-  const Renderer = [OsuRenderer, null, null, ManiaRenderer][beatmap.mode];
-  const renderer = new Renderer(ctx, beatmap);
+  // const ctx = canvasElement.getContext('2d');
+  // ctx.translate(64, 48);
 
-  const hitObjects = beatmap.objects;
-  const timingPoints = beatmap.timing_points;
+  // const Renderer = [OsuRenderer, null, null, ManiaRenderer][beatmap.game_mode()];
+  // const renderer = new Renderer(ctx, beatmap);
 
-  const { sv: SV } = beatmap;
+  // const hitObjects = beatmap.objects;
+  // const timingPoints = beatmap.timing_points;
 
-  processHitObjects(hitObjects, timingPoints, SV);
+  // const { sv: SV } = beatmap;
 
-  const lastObject = hitObjects[hitObjects.length - 1];
-  const lastTime = lastObject.endTime;
+  // processHitObjects(hitObjects, timingPoints, SV);
 
-  if (mapStartTime < 0) {
-    mapStartTime = (lastObject.endTime) * 0.42;
-  }
+  // const lastObject = hitObjects[hitObjects.length - 1];
+  // const lastTime = lastObject.endTime;
+
+  // if (mapStartTime < 0) {
+  //   mapStartTime = (lastObject.endTime) * 0.42;
+  // }
 
   let seeking = false;
 

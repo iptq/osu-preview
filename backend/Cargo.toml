@@ -1,0 +1,31 @@
+[package]
+name = "osu-preview-backend"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+wasm-bindgen = "0.2.82"
+libosu = { git = "https://github.com/iptq/libosu", features = ["pp-calc"] }
+rosu-pp = "0.8.0"
+anyhow = "1.0.62"
+js-sys = "0.3.59"
+
+[profile.release]
+opt-level = "s"
+
+[dependencies.web-sys]
+version = "0.3.4"
+features = [
+  'Document',
+  'Element',
+  'HtmlCanvasElement',
+  'WebGlBuffer',
+  'WebGlVertexArrayObject',
+  'WebGl2RenderingContext',
+  'WebGlProgram',
+  'WebGlShader',
+  'Window',
+]

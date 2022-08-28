@@ -1,27 +1,28 @@
-const webpack = require('webpack');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const path = require('path');
+const webpack = require("webpack");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const WasmPackPlugin = require("@wasm-tool/wasm-pack-plugin");
+const path = require("path");
 
-const root = path.resolve(__dirname, '..');
+const root = path.resolve(__dirname, "..");
 
 module.exports = (env) => {
   const config = {
     entry: {
       popup: [
-        path.resolve(root, 'popup/index.js'),
-        path.resolve(root, 'popup/styles/main.sass'),
+        path.resolve(root, "popup/index.js"),
+        path.resolve(root, "popup/styles/main.sass"),
       ],
-      background: path.resolve(root, 'background/background.js'),
-      content: path.resolve(root, 'background/content.js'),
+      background: path.resolve(root, "background/background.js"),
+      content: path.resolve(root, "background/content.js"),
     },
 
     mode: env,
 
     output: {
-      publicPath: '',
-      path: path.resolve(root, 'build'),
-      filename: '[name].js',
+      publicPath: "",
+      path: path.resolve(root, "build"),
+      filename: "[name].js",
     },
 
     module: {
@@ -29,13 +30,13 @@ module.exports = (env) => {
         {
           test: /\.js?$/,
           exclude:
-            env === 'production'
+            env === "production"
               ? /(node_modules|bower_components)/
               : undefined,
           use: {
-            loader: 'babel-loader',
+            loader: "babel-loader",
             options: {
-              presets: ['@babel/preset-env'],
+              presets: ["@babel/preset-env"],
             },
           },
         },
@@ -44,33 +45,33 @@ module.exports = (env) => {
           use: [
             MiniCssExtractPlugin.loader,
             {
-              loader: 'css-loader',
+              loader: "css-loader",
               options: { url: false },
             },
-            'sass-loader',
+            "sass-loader",
           ],
         },
         {
           test: /\.(png|svg|woff2|ttf)$/,
-          type: 'asset/resource',
+          type: "asset/resource",
         },
       ],
     },
 
-    devtool: env === 'development' ? 'inline-cheap-source-map' : undefined,
+    devtool: env === "development" ? "inline-cheap-source-map" : undefined,
 
     plugins: [
       new CopyWebpackPlugin({
         patterns: [
           {
-            context: './static/',
-            from: '**/*',
-            to: './',
+            context: "./static/",
+            from: "**/*",
+            to: "./",
           },
           {
-            context: './assets/',
-            from: '**/*',
-            to: './assets',
+            context: "./assets/",
+            from: "**/*",
+            to: "./assets",
           },
         ],
       }),
@@ -78,18 +79,26 @@ module.exports = (env) => {
       new webpack.DefinePlugin({
         __DEV__: false,
         __CHROME__: JSON.stringify(
-          JSON.parse(process.env.BUILD_CHROME || true),
+          JSON.parse(process.env.BUILD_CHROME || true)
         ),
         __FIREFOX__: JSON.stringify(JSON.parse(process.env.BUILD_FF || false)),
       }),
 
       new MiniCssExtractPlugin({
-        filename: '[name].css',
+        filename: "[name].css",
+      }),
+
+      new WasmPackPlugin({
+        crateDirectory: path.resolve(root, "backend"),
       }),
     ],
 
     resolve: {
-      extensions: ['.js', '.sass', '.scss'],
+      extensions: [".js", ".sass", ".scss"],
+    },
+
+    experiments: {
+      asyncWebAssembly: true,
     },
   };
   return config;
