@@ -1,5 +1,7 @@
-import { isSlider, isSpinner, isHold, isNewCombo } from './renderers/utils'
-import OsuRenderer from './renderers/osu'; 
+import {
+  isSlider, isSpinner, isHold, isNewCombo,
+} from './renderers/utils';
+import OsuRenderer from './renderers/osu';
 import ManiaRenderer from './renderers/mania';
 
 const toTimeString = (time) => {
@@ -12,7 +14,7 @@ const processHitObjects = (hitObjects, timingPoints, SV) => {
   for (let i = 0; i < hitObjects.length; i += 1) {
     const object = hitObjects[i];
     if (isSlider(object)) {
-      const { ms_per_beat: beatDuration } = timingPoints.find(e => e.time <= object.time);
+      const { ms_per_beat: beatDuration } = timingPoints.find((e) => e.time <= object.time);
       const duration = object.data.distance / (100.0 * SV) * beatDuration;
       const { repetitions } = object.data;
       object.duration = duration;
@@ -27,7 +29,6 @@ const processHitObjects = (hitObjects, timingPoints, SV) => {
   }
 };
 
-
 /**
  *
  * @param {HTMLCanvasElement} canvasElement
@@ -36,18 +37,18 @@ const processHitObjects = (hitObjects, timingPoints, SV) => {
  * @param {*} beatmap
  * @param {*} previewTime
  */
-const playPreview = (canvasElement, playbackTimeElement, progressElement, beatmap, previewTime) => {  
+const playPreview = (canvasElement, playbackTimeElement, progressElement, beatmap, previewTime) => {
   let mapStartTime = previewTime;
   let startTime = performance.now();
 
   const ctx = canvasElement.getContext('2d');
   ctx.translate(64, 48);
 
-  const Renderer = [OsuRenderer, null, null, ManiaRenderer][beatmap.mode]
+  const Renderer = [OsuRenderer, null, null, ManiaRenderer][beatmap.mode];
   const renderer = new Renderer(ctx, beatmap);
 
   const hitObjects = beatmap.objects;
-  const timingPoints = beatmap.timing_points
+  const timingPoints = beatmap.timing_points;
 
   const { sv: SV } = beatmap;
 
@@ -59,7 +60,7 @@ const playPreview = (canvasElement, playbackTimeElement, progressElement, beatma
   if (mapStartTime < 0) {
     mapStartTime = (lastObject.endTime) * 0.42;
   }
-  
+
   let seeking = false;
 
   const animate = (currentTime) => {
