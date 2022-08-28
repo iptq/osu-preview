@@ -14,6 +14,7 @@
           combine [
             minimal.cargo
             minimal.rustc
+            default.rustfmt
             targets.wasm32-unknown-unknown.latest.rust-std
           ];
         myPkgs = rec {
