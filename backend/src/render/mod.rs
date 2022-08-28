@@ -6,14 +6,13 @@ use web_sys::{
 };
 
 use crate::errors::{Error, Result};
-use crate::Beatmap;
+use crate::beatmap::Beatmap;
 
 #[wasm_bindgen]
 pub struct Renderer {
-  canvas: HtmlCanvasElement,
   ctx: WebGl2RenderingContext,
-  sprite_fsh: WebGlShader,
   sprite_vsh: WebGlShader,
+  sprite_fsh: WebGlShader,
 }
 
 #[wasm_bindgen]
@@ -25,23 +24,24 @@ impl Renderer {
       .unwrap()
       .dyn_into::<WebGl2RenderingContext>()?;
 
-    let sprite_fsh = include_str!("../shaders/sprite.fsh");
-    let sprite_fsh = compile_shader(
-      &ctx,
-      WebGl2RenderingContext::FRAGMENT_SHADER,
-      sprite_fsh,
-    )?;
     let sprite_vsh = compile_shader(
       &ctx,
       WebGl2RenderingContext::VERTEX_SHADER,
-      include_str!("../shaders/sprite.vsh"),
-    )?;
+      include_str!("../../shaders/sprite.vsh"),
+    )
+    .map_err(|err| format!("Error with sprite.vsh: {}", err))?;
+
+    let sprite_fsh = compile_shader(
+      &ctx,
+      WebGl2RenderingContext::FRAGMENT_SHADER,
+      include_str!("../../shaders/sprite.fsh"),
+    )
+    .map_err(|err| format!("Error with sprite.fsh: {}", err))?;
 
     Ok(Renderer {
-      canvas,
       ctx,
-      sprite_fsh,
       sprite_vsh,
+      sprite_fsh,
     })
   }
 

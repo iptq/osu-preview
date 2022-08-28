@@ -1,5 +1,6 @@
 import { BEATMAP_URL_REGEX } from "../common/constants";
 import playPreview from "./canvas";
+import * as ojsama from "./ojsama";
 import { Beatmap, Renderer } from "../backend/pkg";
 
 const FETCH_ATTEMPTS = 3;
@@ -18,8 +19,9 @@ const errorElement = document.getElementById("error");
 
 // Set after the extension initializes, used for additional error information.
 let previewTime = null;
+let libosuBeatmap = null;
 let cleanBeatmap = null;
-let renderer = new Renderer(canvasElement);
+// let renderer = new Renderer(canvasElement);
 let pageInfo = {
   isOldSite: null,
   beatmapSetId: null,
@@ -42,9 +44,9 @@ function onReady([, cover]) {
   }
 
   // Set header text
-  titleElement.innerText = cleanBeatmap.title();
-  artistElement.innerText = cleanBeatmap.artist();
-  difficultyNameElement.innerText = cleanBeatmap.difficulty_name();
+  titleElement.innerText = libosuBeatmap.title();
+  artistElement.innerText = libosuBeatmap.artist();
+  difficultyNameElement.innerText = libosuBeatmap.difficulty_name();
 
   const audio = new Audio();
   audio.volume = 0.45;
@@ -53,7 +55,6 @@ function onReady([, cover]) {
     .play()
     .then(() =>
       playPreview(
-        renderer,
         canvasElement,
         playbackTimeElement,
         progressElement,
@@ -124,13 +125,16 @@ const attemptToFetchBeatmap = (id, attempts) =>
   });
 
 const processBeatmap = (rawBeatmap) => {
-  cleanBeatmap = Beatmap.new(rawBeatmap);
-  previewTime = cleanBeatmap.preview_time();
+  libosuBeatmap = Beatmap.new(rawBeatmap);
+  previewTime = libosuBeatmap.preview_time();
+
+  const { map } = new ojsama.parser().feed(rawBeatmap);
+  cleanBeatmap = map;
 
   chrome.extension.getBackgroundPage().console.log(cleanBeatmap);
 
   const supportedGamemodes = [0, 3];
-  if (!supportedGamemodes.includes(cleanBeatmap.game_mode())) {
+  if (!supportedGamemodes.includes(libosuBeatmap.game_mode())) {
     throw Error(UNSUPPORTED_GAMEMODE);
   }
 };

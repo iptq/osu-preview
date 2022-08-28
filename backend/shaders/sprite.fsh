@@ -1,5 +1,8 @@
 #version 300 es
 
+precision mediump float;
+precision mediump sampler2DArray;
+
 in vec4 col_tint;
 in vec3 tex_coord;
 in float additive;
@@ -15,7 +18,7 @@ float median(float r, float g, float b) {
 void main() {
   vec4 in_color = texture(tex, tex_coord);
 
-  color = in_color*col_tint;
+  color = in_color * col_tint;
   color.rgb *= color.a;
   color.a *= additive;
 }
